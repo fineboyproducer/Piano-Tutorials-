@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivory & Keys — Learn Piano & Keyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+  :root{
+    --ink:#EAF3F7;
+    --ink-2:#DFEEF4;
+    --card:#FFFFFF;
+    --card-hi:#F2F9FC;
+    --ivory:#1E3542;
+    --ivory-dim:#4C6672;
+    --gold:#8FCBE0;
+    --gold-hi:#6FB8D4;
+    --wood:#B9DEEC;
+    --line:rgba(30,53,66,0.12);
+    --shadow-key: 0 6px 0 #c3dce6, 0 10px 18px rgba(30,53,66,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--ivory);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    color:var(--ivory);
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  ::selection{background:var(--gold); color:var(--ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* NAV */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(234,243,247,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-size:1.3rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:2px;
+    letter-spacing:0.01em;
+  }
+  .brand .amp{color:var(--gold); font-style:italic; font-weight:400; padding:0 2px;}
+  .nav-cta{
+    background:var(--gold);
+    color:#0F2733;
+    padding:10px 22px;
+    border-radius:2px;
+    font-weight:600;
+    font-size:0.9rem;
+    text-decoration:none;
+    transition:background 0.2s ease, transform 0.15s ease;
+  }
+  .nav-cta:hover{background:var(--gold-hi); transform:translateY(-1px);}
+
+  /* HERO */
+  .hero{
+    padding:168px 0 60px;
+    position:relative;
+  }
+  .eyebrow{
+    color:var(--gold);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    margin-bottom:22px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:24px; height:1px;
+    background:var(--gold);
+    display:inline-block;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 6vw, 4.6rem);
+    line-height:1.04;
+    max-width:820px;
+    margin-bottom:26px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold-hi);
+    font-weight:400;
+  }
+  .hero p.lead{
+    font-size:1.15rem;
+    color:var(--ivory-dim);
+    max-width:520px;
+    margin-bottom:40px;
+  }
+  .hero-ctas{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:64px;}
+  .btn-primary{
+    background:var(--gold);
+    color:#0F2733;
+    padding:16px 32px;
+    border-radius:2px;
+    font-weight:700;
+    text-decoration:none;
+    font-size:0.98rem;
+    border:none;
+    cursor:pointer;
+    transition:background 0.2s ease, transform 0.15s ease;
+  }
+  .btn-primary:hover{background:var(--gold-hi); transform:translateY(-2px);}
+  .btn-ghost{
+    background:transparent;
+    color:var(--ivory);
+    padding:16px 28px;
+    border-radius:2px;
+    font-weight:600;
+    text-decoration:none;
+    font-size:0.98rem;
+    border:1px solid var(--line);
+    transition:border-color 0.2s ease, background 0.2s ease;
+  }
+  .btn-ghost:hover{border-color:var(--gold); background:rgba(143,203,224,0.12);}
+
+  /* KEY STRIP (decorative, playable) */
+  .key-glow-wrap{
+    position:relative;
+    padding-top:40px;
+  }
+  .light-beam{
+    position:absolute;
+    top:-60px;
+    width:180px;
+    height:260px;
+    background:radial-gradient(ellipse at 50% 0%, rgba(143,203,224,0.55) 0%, rgba(143,203,224,0.18) 45%, rgba(143,203,224,0) 75%);
+    filter:blur(6px);
+    pointer-events:none;
+    z-index:1;
+    animation:beamFloat 7s ease-in-out infinite;
+  }
+  .beam-1{left:8%; animation-delay:0s;}
+  .beam-2{left:42%; height:300px; width:220px; animation-delay:1.4s;}
+  .beam-3{left:74%; animation-delay:0.7s;}
+  @keyframes beamFloat{
+    0%, 100%{opacity:0.7; transform:translateY(0);}
+    50%{opacity:1; transform:translateY(8px);}
+  }
+  .keystrip{
+    display:flex;
+    height:150px;
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(30,53,66,0.18), 0 0 80px rgba(143,203,224,0.35);
+    position:relative;
+    z-index:2;
+  }
+  .wkey{
+    flex:1;
+    background:linear-gradient(180deg, #FFFFFF 0%, #EEF7FA 100%);
+    border-right:1px solid rgba(30,53,66,0.1);
+    position:relative;
+    cursor:pointer;
+    transition:transform 0.08s ease, background 0.08s ease;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:14px;
+  }
+  .wkey:last-child{border-right:none;}
+  .wkey:hover, .wkey:active{
+    background:linear-gradient(180deg, #DCF0F7 0%, var(--gold) 100%);
+    transform:translateY(4px);
+  }
+  .wkey span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--ivory);
+    opacity:0.35;
+    letter-spacing:0.05em;
+  }
+  .bkey{
+    position:absolute;
+    top:0;
+    width:6.2%;
+    height:62%;
+    background:linear-gradient(180deg, #2C4655 0%, #16232C 100%);
+    border-radius:0 0 3px 3px;
+    z-index:2;
+    cursor:pointer;
+    transition:transform 0.08s ease;
+    box-shadow:0 4px 8px rgba(30,53,66,0.35);
+  }
+  .bkey:hover, .bkey:active{transform:translateY(3px); background:linear-gradient(180deg, var(--gold-hi) 0%, #1E3542 100%);}
+
+  /* SECTION SHARED */
+  section{padding:110px 0;}
+  .section-head{max-width:640px; margin-bottom:64px;}
+  .section-head .eyebrow{margin-bottom:18px;}
+  .section-head h2{font-size:clamp(2rem, 4vw, 2.8rem); margin-bottom:18px;}
+  .section-head p{color:var(--ivory-dim); font-size:1.05rem;}
+
+  /* WHY / FEATURES */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .feature{
+    background:var(--ink);
+    padding:40px 32px;
+  }
+  .feature .fkey{
+    width:34px; height:46px;
+    background:#FFFFFF;
+    border:1px solid var(--line);
+    border-radius:0 0 3px 3px;
+    margin-bottom:24px;
+    position:relative;
+  }
+  .feature .fkey::after{
+    content:'';
+    position:absolute;
+    right:-11px; top:0;
+    width:16px; height:60%;
+    background:var(--ivory);
+    border-radius:0 0 2px 2px;
+  }
+  .feature h3{font-size:1.2rem; margin-bottom:12px; font-weight:500;}
+  .feature p{color:var(--ivory-dim); font-size:0.95rem;}
+
+  /* PRICING */
+  .pricing-controls{
+    display:flex; flex-direction:column; gap:36px;
+    margin-bottom:56px;
+  }
+  .control-group label{
+    display:block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:16px;
+  }
+  .key-select{
+    display:flex;
+    gap:0;
+    border-radius:3px;
+    overflow:hidden;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .key-opt{
+    flex:1;
+    background:#FFFFFF;
+    color:var(--ivory);
+    border:none;
+    padding:26px 12px 20px;
+    cursor:pointer;
+    font-family:'Fraunces', serif;
+    font-size:1.05rem;
+    font-weight:500;
+    border-right:1px solid rgba(30,53,66,0.08);
+    position:relative;
+    transition:all 0.15s ease;
+  }
+  .key-opt:last-child{border-right:none;}
+  .key-opt .sub{
+    display:block;
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    color:var(--ivory-dim);
+    font-weight:400;
+    margin-top:4px;
+  }
+  .key-opt:hover{background:#EAF6FA;}
+  .key-opt.active{
+    background:var(--gold);
+    color:#0F2733;
+    transform:translateY(4px);
+    box-shadow:inset 0 -4px 0 rgba(15,39,51,0.15);
+  }
+  .key-opt.active .sub{color:rgba(15,39,51,0.65);}
+
+  .price-display{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:32px;
+  }
+  .price-info .plan-name{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  .price-info .amount{
+    font-family:'Fraunces', serif;
+    font-size:3.2rem;
+    font-weight:600;
+    color:var(--ivory);
+    line-height:1;
+  }
+  .price-info .amount sup{font-size:1.4rem; opacity:0.6; font-weight:400;}
+  .price-info .per{color:var(--ivory-dim); font-size:0.95rem; margin-top:8px;}
+  .price-cta{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  .price-cta .save-note{font-size:0.85rem; color:var(--gold-hi);}
+
+  /* FORM MODAL */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(15,39,51,0.45);
+    backdrop-filter:blur(4px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:40px;
+    max-width:440px;
+    width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+  }
+  .modal h3{font-size:1.5rem; margin-bottom:6px;}
+  .modal .modal-sub{color:var(--ivory-dim); font-size:0.9rem; margin-bottom:28px;}
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block;
+    font-size:0.82rem;
+    color:var(--ivory-dim);
+    margin-bottom:8px;
+    font-weight:500;
+  }
+  .field input, .field select{
+    width:100%;
+    background:var(--ink);
+    border:1px solid var(--line);
+    color:var(--ivory);
+    padding:13px 14px;
+    border-radius:3px;
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+  }
+  .field input:focus, .field select:focus{
+    outline:none;
+    border-color:var(--gold);
+  }
+  .modal-summary{
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:18px 20px;
+    margin-bottom:24px;
+    font-size:0.9rem;
+    color:var(--ivory-dim);
+  }
+  .modal-summary strong{color:var(--ivory);}
+  .modal-close{
+    position:absolute;
+    top:20px; right:20px;
+    background:none;
+    border:none;
+    color:var(--ivory-dim);
+    font-size:1.4rem;
+    cursor:pointer;
+    line-height:1;
+  }
+  .modal-wrap{position:relative;}
+  .btn-block{width:100%; text-align:center;}
+  .location-toggle{display:flex; gap:10px;}
+  .location-toggle button{
+    flex:1;
+    background:var(--ink);
+    border:1px solid var(--line);
+    color:var(--ivory-dim);
+    padding:12px;
+    border-radius:3px;
+    cursor:pointer;
+    font-size:0.88rem;
+    transition:all 0.15s ease;
+  }
+  .location-toggle button.active{
+    border-color:var(--gold);
+    color:var(--gold-hi);
+    background:rgba(143,203,224,0.15);
+  }
+
+  /* TESTIMONIAL-STYLE / TRUST */
+  .trust-strip{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:32px 0;
+  }
+  .trust-strip .wrap{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+    gap:24px;
+    text-align:center;
+  }
+  .trust-item .num{
+    font-family:'Fraunces', serif;
+    font-size:2rem;
+    color:var(--gold-hi);
+    font-weight:600;
+  }
+  .trust-item .label{
+    font-size:0.82rem;
+    color:var(--ivory-dim);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:4px;
+  }
+
+  /* HOW IT WORKS */
+  .steps{display:flex; flex-direction:column; gap:0;}
+  .step{
+    display:flex;
+    gap:32px;
+    padding:36px 0;
+    border-bottom:1px solid var(--line);
+    align-items:flex-start;
+  }
+  .step:last-child{border-bottom:none;}
+  .step .step-key{
+    font-family:'Fraunces', serif;
+    font-size:1.1rem;
+    color:var(--ivory);
+    background:#FFFFFF;
+    border:1px solid var(--line);
+    width:52px; height:68px;
+    border-radius:0 0 4px 4px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:10px;
+    flex-shrink:0;
+    font-weight:600;
+  }
+  .step h4{font-size:1.15rem; margin-bottom:8px; font-weight:500;}
+  .step p{color:var(--ivory-dim); font-size:0.95rem; max-width:520px;}
+
+  /* FOOTER */
+  footer{
+    padding:60px 0 40px;
+    border-top:1px solid var(--line);
+  }
+  footer .wrap{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+  }
+  footer .foot-note{color:var(--ivory-dim); font-size:0.85rem;}
+
+  @media (max-width:760px){
+    .feature-grid{grid-template-columns:1fr;}
+    .key-select{flex-wrap:wrap;}
+    .key-opt{flex:1 1 100%;}
+    .price-display{padding:32px 24px; flex-direction:column; align-items:flex-start;}
+    .price-cta{align-items:flex-start; width:100%;}
+    .bkey{display:none;}
+    .keystrip{height:100px;}
+    .light-beam{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Ivory<span class="amp">&</span>Keys</div>
+    <a href="#pricing" class="nav-cta">Start Learning</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Piano &amp; Keyboard Lessons · Ekpoma &amp; Online</div>
+    <h1>Learn to play. <em>Learn to feel.</em></h1>
+    <p class="lead">Structured piano and keyboard lessons for every level — from your first scale to performance-ready. Online or in person, taught around your life.</p>
+    <div class="hero-ctas">
+      <a href="#pricing" class="btn-primary">See Programs &amp; Pricing</a>
+      <a href="#how" class="btn-ghost">How It Works</a>
+    </div>
+    <div class="key-glow-wrap">
+      <div class="light-beam beam-1"></div>
+      <div class="light-beam beam-2"></div>
+      <div class="light-beam beam-3"></div>
+      <div class="keystrip" aria-hidden="true">
+        <div class="wkey"><span>C</span></div>
+        <div class="wkey"><span>D</span></div>
+        <div class="wkey"><span>E</span></div>
+        <div class="wkey"><span>F</span></div>
+        <div class="wkey"><span>G</span></div>
+        <div class="wkey"><span>A</span></div>
+        <div class="wkey"><span>B</span></div>
+        <div class="wkey"><span>C</span></div>
+        <div class="wkey"><span>D</span></div>
+        <div class="wkey"><span>E</span></div>
+        <div class="wkey"><span>F</span></div>
+        <div class="wkey"><span>G</span></div>
+        <div class="wkey"><span>A</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="trust-strip">
+  <div class="wrap">
+    <div class="trust-item">
+      <div class="num">3</div>
+      <div class="label">Skill Levels</div>
+    </div>
+    <div class="trust-item">
+      <div class="num">1:1</div>
+      <div class="label">Personal Attention</div>
+    </div>
+    <div class="trust-item">
+      <div class="num">2</div>
+      <div class="label">Online or In-Person</div>
+    </div>
+    <div class="trust-item">
+      <div class="num">₦</div>
+      <div class="label">Pay Once, Learn All Term</div>
+    </div>
+  </div>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Why Ivory &amp; Keys</div>
+      <h2>Every hand starts somewhere different.</h2>
+      <p>Lessons are built around where you actually are — not a one-size curriculum. Pick your level, pick your pace, and we handle the rest.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="fkey"></div>
+        <h3>Placed by Level</h3>
+        <p>Basic, Intermediate, or Professional — you're taught technique and repertoire suited to where your hands already are.</p>
+      </div>
+      <div class="feature">
+        <div class="fkey"></div>
+        <h3>Flexible Format</h3>
+        <p>Learn from home online, or in person if you're within reach. Same curriculum, same attention, your choice.</p>
+      </div>
+      <div class="feature">
+        <div class="fkey"></div>
+        <h3>Committed Duration</h3>
+        <p>Choose a 1, 2, or 3-month program. Longer terms are priced to reward the commitment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">How It Works</div>
+      <h2>Three steps. No calls needed.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-key">1</div>
+        <div>
+          <h4>Choose your level and term</h4>
+          <p>Select Basic, Intermediate, or Professional, then pick a 1, 2, or 3-month program below.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-key">2</div>
+        <div>
+          <h4>Pay securely with Paystack</h4>
+          <p>One flat payment for your full program — card, bank transfer, or USSD.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-key">3</div>
+        <div>
+          <h4>We reach out to schedule you</h4>
+          <p>Within 24 hours of payment, you'll be contacted directly to lock in your class time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Programs &amp; Pricing</div>
+      <h2>Pick your level, pick your term.</h2>
+      <p>Prices update as you choose — this is the whole application. No forms until you're ready to pay.</p>
+    </div>
+
+    <div class="pricing-controls">
+      <div class="control-group">
+        <label>Skill Level</label>
+        <div class="key-select" id="levelSelect">
+          <button class="key-opt active" data-level="basic">Basic<span class="sub">New to piano</span></button>
+          <button class="key-opt" data-level="intermediate">Intermediate<span class="sub">Some experience</span></button>
+          <button class="key-opt" data-level="professional">Professional<span class="sub">Advanced / performance</span></button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Program Duration</label>
+        <div class="key-select" id="durationSelect">
+          <button class="key-opt active" data-duration="1">1 Month</button>
+          <button class="key-opt" data-duration="2">2 Months<span class="sub">Save vs monthly</span></button>
+          <button class="key-opt" data-duration="3">3 Months<span class="sub">Best value</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-display">
+      <div class="price-info">
+        <div class="plan-name" id="planName">Basic · 1 Month</div>
+        <div class="amount"><sup>₦</sup><span id="priceAmount">25,000</span></div>
+        <div class="per" id="perMonthNote">Full program, paid once</div>
+      </div>
+      <div class="price-cta">
+        <div class="save-note" id="saveNote"></div>
+        <button class="btn-primary" onclick="openModal()">Apply &amp; Pay</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">Ivory<span class="amp">&</span>Keys</div>
+    <div class="foot-note">Piano &amp; keyboard lessons, online and in person.</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal modal-wrap">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h3>Complete Your Enrollment</h3>
+    <p class="modal-sub">Just a few details so we can reach you and set up your lessons.</p>
+
+    <div class="modal-summary">
+      <strong id="summaryPlan">Basic · 1 Month</strong> — ₦<span id="summaryPrice">25,000</span>
+    </div>
+
+    <form id="enrollForm" onsubmit="return false;">
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" required placeholder="e.g. Amaka Obi">
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" required placeholder="080X XXX XXXX">
+      </div>
+      <div class="field">
+        <label>Class Format</label>
+        <div class="location-toggle">
+          <button type="button" class="active" id="onlineBtn" onclick="setLocation('online')">Online</button>
+          <button type="button" id="inpersonBtn" onclick="setLocation('in-person')">In-Person</button>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary btn-block" onclick="payWithPaystack()">Pay ₦<span id="payBtnPrice">25,000</span> with Paystack</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const prices = {
+    basic: {1: 25000, 2: 45000, 3: 65000},
+    intermediate: {1: 35000, 2: 65000, 3: 90000},
+    professional: {1: 50000, 2: 95000, 3: 130000}
+  };
+  const levelLabels = {basic: 'Basic', intermediate: 'Intermediate', professional: 'Professional'};
+
+  let state = {level: 'basic', duration: 1, location: 'online'};
+
+  function updateDisplay(){
+    const price = prices[state.level][state.duration];
+    document.getElementById('planName').textContent = `${levelLabels[state.level]} · ${state.duration} Month${state.duration > 1 ? 's' : ''}`;
+    document.getElementById('priceAmount').textContent = price.toLocaleString();
+
+    // savings note vs paying monthly rate x duration
+    const monthlyRate = prices[state.level][1];
+    const fullPriceIfMonthly = monthlyRate * state.duration;
+    const savings = fullPriceIfMonthly - price;
+    const saveNoteEl = document.getElementById('saveNote');
+    if(savings > 0){
+      saveNoteEl.textContent = `You save ₦${savings.toLocaleString()} vs paying monthly`;
+    } else {
+      saveNoteEl.textContent = '';
+    }
+  }
+
+  document.getElementById('levelSelect').addEventListener('click', (e) => {
+    const btn = e.target.closest('.key-opt');
+    if(!btn) return;
+    document.querySelectorAll('#levelSelect .key-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.level = btn.dataset.level;
+    updateDisplay();
+  });
+
+  document.getElementById('durationSelect').addEventListener('click', (e) => {
+    const btn = e.target.closest('.key-opt');
+    if(!btn) return;
+    document.querySelectorAll('#durationSelect .key-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.duration = parseInt(btn.dataset.duration);
+    updateDisplay();
+  });
+
+  function setLocation(loc){
+    state.location = loc;
+    document.getElementById('onlineBtn').classList.toggle('active', loc === 'online');
+    document.getElementById('inpersonBtn').classList.toggle('active', loc === 'in-person');
+  }
+
+  function openModal(){
+    const price = prices[state.level][state.duration];
+    document.getElementById('summaryPlan').textContent = `${levelLabels[state.level]} · ${state.duration} Month${state.duration > 1 ? 's' : ''}`;
+    document.getElementById('summaryPrice').textContent = price.toLocaleString();
+    document.getElementById('payBtnPrice').textContent = price.toLocaleString();
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal(){
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function payWithPaystack(){
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    if(!name || !email || !phone){
+      alert('Please fill in your name, email, and phone number.');
+      return;
+    }
+
+    const price = prices[state.level][state.duration];
+
+    // NOTE: Replace 'pk_test_xxxxxxxxxxxx' with your real Paystack PUBLIC key.
+    const handler = PaystackPop.setup({
+      key: 'pk_live_5948e75ef11bc049500e591b2cf2d782e24f0b1b',
+      email: email,
+      amount: price * 100, // Paystack expects amount in kobo
+      currency: 'NGN',
+      metadata: {
+        custom_fields: [
+          {display_name: "Full Name", variable_name: "full_name", value: name},
+          {display_name: "Phone", variable_name: "phone", value: phone},
+          {display_name: "Level", variable_name: "level", value: levelLabels[state.level]},
+          {display_name: "Duration", variable_name: "duration", value: state.duration + " month(s)"},
+          {display_name: "Format", variable_name: "format", value: state.location}
+        ]
+      },
+      callback: function(response){
+        alert('Payment successful! Reference: ' + response.reference + '\\nWe will contact you within 24 hours to schedule your lessons.');
+        closeModal();
+      },
+      onClose: function(){
+        // user closed the payment popup
+      }
+    });
+    handler.openIframe();
+  }
+
+  updateDisplay();
+</script>
+
+</body>
+</html>
